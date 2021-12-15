@@ -7,8 +7,8 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "\"condition\"")
-public class Condition {
+@Entity()
+public class Conditionn {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id @Getter @Setter @Column
     private Long id;
@@ -19,8 +19,8 @@ public class Condition {
     @Column @Getter @Setter
     private Long eventId;
 
-    public Condition(){}
-    public Condition(String username){
+    public Conditionn(){}
+    public Conditionn(String username){
         this.username = username;
     }
 
