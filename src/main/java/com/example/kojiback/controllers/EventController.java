@@ -214,6 +214,17 @@ public class EventController {
             eventDates.forEach(item -> {
                 dates.add(item.getDate());
             });
+
+            Collection<EventAgree> eventAgreeRelations = eventAgreeRepository.findAllByEventId(eventId);
+            Collection<EventDisagree> eventDisagreeRelations = eventDisagreeRepository.findAllByEventId(eventId);
+
+            eventAgreeRelations.forEach(item->{
+                eventAgreeRepository.delete(item);
+            });
+            eventDisagreeRelations.forEach(item->{
+                eventDisagreeRepository.delete(item);
+            });
+
             EventDetailsResponse eventDetailsResponse = new EventDetailsResponse(
                     event.getId(),
                     event.getTitle(),
