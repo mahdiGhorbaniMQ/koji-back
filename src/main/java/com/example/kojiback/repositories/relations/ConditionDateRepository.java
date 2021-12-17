@@ -1,8 +1,6 @@
-package com.example.kojiback.repositories.lists;
+package com.example.kojiback.repositories.relations;
 
-import com.example.kojiback.models.lists.ConditionDate;
-import com.example.kojiback.models.lists.ConditionPlace;
-import com.example.kojiback.models.lists.Place;
+import com.example.kojiback.models.relations.ConditionDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -15,4 +15,5 @@ public interface EventConditionRepository extends JpaRepository<EventCondition,L
 
     @Query("SELECT u FROM EventCondition u WHERE u.condition_id = ?1")
     Collection<EventCondition> findAllByConditionId(Long condition_id);
+
 }

@@ -1,4 +1,4 @@
-package com.example.kojiback.models.lists;
+package com.example.kojiback.models.relations;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -22,6 +22,9 @@ public class Group {
     @Column @Getter @Setter
     private String owner;
 
+    @Column @Getter @Setter
+    private String link;
+
     public Group(){}
     public Group(String name,String bio,String owner){
         this.name = name;

@@ -37,11 +37,6 @@ public class UserController {
     @Autowired
     UserGroupRepository userGroupRepository;
 
-    @GetMapping("/test")
-    public ResponseEntity<?> test(Principal principal){
-        return ResponseEntity.ok(principal.getName());
-    }
-
     @GetMapping("/details")
     public ResponseEntity<?> getUserDetails(Principal principal) {
 
@@ -91,7 +86,7 @@ public class UserController {
     }
 
 
-    @GetMapping("profile")
+    @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(@RequestParam String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));

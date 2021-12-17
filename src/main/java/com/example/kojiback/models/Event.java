@@ -20,6 +20,12 @@ public class Event {
     private String description;
 
     @Column @Getter @Setter
+    private String finalPlace;
+
+    @Column @Getter @Setter
+    private String finalDate;
+
+    @Column @Getter @Setter
     private String owner;
 
     public Event(){}

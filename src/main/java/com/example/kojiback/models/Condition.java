@@ -8,7 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity()
-public class Conditionn {
+@Table(name = "\"condition\"")
+public class Condition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id @Getter @Setter @Column
     private Long id;
@@ -19,8 +20,11 @@ public class Conditionn {
     @Column @Getter @Setter
     private Long eventId;
 
-    public Conditionn(){}
-    public Conditionn(String username){
+    @Column @Getter @Setter
+    private String state;
+
+    public Condition(){}
+    public Condition(String username){
         this.username = username;
     }
 

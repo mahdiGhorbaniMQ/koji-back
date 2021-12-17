@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity(name = "\"message\"")
 public class Message {
@@ -20,16 +20,16 @@ public class Message {
     private String content;
 
     @Column @Getter @Setter
-    private LocalDate localDate;
+    private Date date;
 
     @Column @Getter @Setter
     private Long eventId;
 
     public Message(){}
-    public Message(String writer,String content,LocalDate localDate,Long eventId){
+    public Message(String writer, String content, Date date, Long eventId){
         this.writer = writer;
         this.content = content;
-        this.localDate = localDate;
+        this.date = date;
         this.eventId = eventId;
     }
 }

@@ -4,7 +4,7 @@ import com.example.kojiback.models.Group;
 import com.example.kojiback.models.User;
 import com.example.kojiback.models.relations.GroupEvent;
 import com.example.kojiback.models.relations.UserGroup;
-import com.example.kojiback.payload.request.CreateGroupRequest;
+import com.example.kojiback.payload.request.GroupRequest;
 import com.example.kojiback.payload.response.GroupDetailsResponse;
 import com.example.kojiback.payload.response.GroupProfileResponse;
 import com.example.kojiback.payload.response.MessageResponse;
@@ -16,7 +16,6 @@ import com.example.kojiback.security.jwt.AuthTokenFilter;
 import com.example.kojiback.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +48,7 @@ public class GroupController {
     GroupEventRepository groupEventRepository;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createGroup(Principal principal, @RequestBody CreateGroupRequest newGroup) {
+    public ResponseEntity<?> createGroup(Principal principal, @RequestBody GroupRequest newGroup) {
         String username = principal.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
@@ -58,9 +57,31 @@ public class GroupController {
                 newGroup.getName(),
                 newGroup.getBio(),
                 user.getUsername());
+
         groupRepository.save(group);
+
+        int left = (int)(Math.random()*8999);
+        left+=1000;
+        Long longLeft=Long.valueOf(left);
+        String link="";
+        link+= longLeft.toString();
+        Long id =Long.valueOf(group.getId());
+        link+=id.toString();
+        int right = (int)(Math.random()*8999);
+        right+=1000;
+        Long longRight=Long.valueOf(right);
+        link+=longRight.toString();
+
+        group.setLink(link);
+        groupRepository.save(group);
+
         UserGroup userGroupRelation = new UserGroup(username,group.getId());
         userGroupRepository.save(userGroupRelation);
+
+        newGroup.getUsers().forEach(groupUser ->{
+            UserGroup userGroupRelation_member = new UserGroup(groupUser,group.getId());
+            userGroupRepository.save(userGroupRelation_member);
+        });
         return ResponseEntity.ok(group);
     }
 
@@ -91,6 +112,7 @@ public class GroupController {
                     group.getName(),
                     group.getBio(),
                     group.getOwner(),
+                    group.getLink(),
                     groupUsers,
                     groupEvents));
         }
@@ -111,6 +133,7 @@ public class GroupController {
                group.getName(),
                group.getBio(),
                group.getOwner(),
+               group.getLink(),
                groupUsers));
     }
 
@@ -135,7 +158,7 @@ public class GroupController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateGroupProfile(Principal principal,@RequestParam Long groupId,@RequestBody CreateGroupRequest newGroup) {
+    public ResponseEntity<?> updateGroupProfile(Principal principal,@RequestParam Long groupId,@RequestBody GroupRequest newGroup) {
         String username = principal.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
@@ -148,6 +171,12 @@ public class GroupController {
             groupUsers.add(item.getUsername());
         });
         if(groupUsers.contains(username) && group.getOwner().equals(user.getUsername())){
+            newGroup.getUsers().forEach(groupUser ->{
+                if(userGroupRepository.getByUsernameAndGroAndGroupId(groupUser,group.getId()) == null) {
+                    UserGroup userGroupRelation_member = new UserGroup(groupUser, group.getId());
+                    userGroupRepository.save(userGroupRelation_member);
+                }
+            });
             group.setName(newGroup.getName());
             group.setBio(newGroup.getBio());
             groupRepository.save(group);
@@ -175,9 +204,9 @@ public class GroupController {
         if((group.getOwner().equals(clientUser.getUsername()) || user.getUsername().equals(clientUser.getUsername())) && !groupUsers.contains(username)){
             UserGroup userGroupRelation = new UserGroup(user.getUsername(),group.getId());
             userGroupRepository.save(userGroupRelation);
-            return ResponseEntity.ok("user successfully removed");
+            return ResponseEntity.ok("user successfully added");
         }
-        else  return ResponseEntity.badRequest().body(new MessageResponse("Error: access denied!"));
+        else  return ResponseEntity.badRequest().body(new MessageResponse("Error: bad request!"));
     }
     @GetMapping("/removeUser")
     public ResponseEntity<?> removeUserFromGroup(Principal principal,@RequestParam Long groupId, @RequestParam String username) {
@@ -200,6 +229,6 @@ public class GroupController {
             userGroupRepository.delete(userGroupRelation);
             return ResponseEntity.ok("user successfully removed");
         }
-        else  return ResponseEntity.badRequest().body(new MessageResponse("Error: access denied!"));
+        else  return ResponseEntity.badRequest().body(new MessageResponse("Error: bad request!"));
     }
 }
